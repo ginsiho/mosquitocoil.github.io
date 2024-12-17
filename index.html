@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mosquito coil</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column; /* 입력창과 나선형 텍스트를 수직 정렬 */
+            justify-content: flex-start;
+            align-items: center;
+            background: #c5fffa;
+        }
+
+        .input-container {
+            margin: 20px;
+            display: center;
+            width: 80%; /* 입력창을 화면 너비만큼 늘리고, 버튼도 여기에 맞춤 */
+        }
+
+        input[type="text"] {
+            width: 100%; /* 입력창을 90%로 설정하여 버튼과 간격을 조절 */
+            font-size: 16px;
+            border: 1px solid #ffffff;
+            background-color: #ffffff;
+        }
+
+        .spiral-container {
+    position: relative;
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* 컨테이너를 벗어나는 요소 숨김 */
+}
+
+        .spiral-container span {
+            position: absolute;
+            font-size: 10px;
+            color: #ffffff;
+            white-space: nowrap;
+            background-color: #009a00; /* 초록색 배경 */
+            padding: 1px 2px; /* 텍스트 주위 여백 */
+            border-radius: 5px; /* 둥근 모서리 */
+            transition: background-color 0.3s ease, opacity 0.3s ease, transform 5s ease-in-out; /* 애니메이션 효과 */
+        }
+
+        .spiral-container span.disappear {
+            background-color: #dd2302; /* 빨간색 배경으로 변화 */
+            
+            transform: translateY(0); /* 초기 위치로 리셋 */
+        }
+
+        .spiral-container span.fall {
+            background-color: #c3e1ff00; /* 흰색 배경으로 변화 */
+            color: #000000; /* 텍스트 색상 변경 */
+            opacity: 1; /* 다시 보이게 */
+            transform: translateY(calc(100vh - 80px)); /* 화면의 아래로 떨어짐 */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="input-container">
+        <input type="text" id="text-input" placeholder="태우고 싶은 것을 입력하세요. 입력을 마친 후 가운데를 클릭하면 의식이 시작됩니다.">
+    </div>
+    <div class="spiral-container" id="spiral-container"></div>
+
+
+    <script>
+        const input = document.getElementById("text-input");
+        const container = document.getElementById("spiral-container");
+
+        const centerX = window.innerWidth / 2 - 20; // 중심 X 좌표 (화면 중앙)
+        const centerY = window.innerHeight / 2 - 50; // 중심 Y 좌표 (화면 중앙)
+        const charSpacing = 10; // 글자 간 거리 (픽셀 단위)
+
+        function generateSpiralText() {
+            const text = input.value || "ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ"; // 입력된 텍스트 또는 기본값
+            container.innerHTML = ""; // 기존 내용 초기화
+
+            let angle = 10; // 초기 각도
+            let radius = 30; // 초기 반지름
+
+            // 나선형 텍스트 배치
+            text.split('').forEach((char) => {
+                const span = document.createElement("span");
+                span.textContent = char;
+
+                // 나선형 위치 계산
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+
+                // 글자의 위치와 스타일 적용
+                span.style.left = `${x}px`;
+                span.style.top = `${y}px`;
+
+                container.appendChild(span);
+
+                // 각도 증가량 계산 (자간 일정하게 유지)
+                const angleIncrement = charSpacing / radius; // 자간과 반지름에 비례해 각도 증가
+                angle += angleIncrement;
+
+                // 반지름 증가 (나선형 유지)
+                radius += 0.5; // 필요시 조정 가능
+            });
+
+            // 클릭 이벤트가 기본 텍스트에 적용되지 않도록 하기 위해 
+            if (input.value !== "") {
+                container.addEventListener("click", handleSpiralClick);
+            }
+        }
+
+        function handleSpiralClick() {
+            const spans = Array.from(container.children); // 모든 span 요소 가져오기
+            spans.reverse().forEach((span, index) => {
+                // 첫 번째 애니메이션 (빨간색으로 변하고 사라짐)
+                setTimeout(() => {
+                    span.classList.add("disappear");
+                }, index * 100); // 각 글자가 100ms 간격으로 변화
+
+                // 두 번째 애니메이션 (화면 밖에서 떨어지기 시작)
+                setTimeout(() => {
+                    span.classList.remove("disappear");
+
+                    // 랜덤한 위치에서 떨어지도록 설정
+                    const randomLeft = Math.random() * window.innerWidth; // 화면 너비 범위에서 랜덤
+                    span.style.left = `${randomLeft}px`;
+                    span.style.top = `-${Math.random() * 100}px`; // 화면 밖 상단에 랜덤 위치 설정
+
+                    span.classList.add("fall");
+                }, index * 100 + 500); // 500ms 후에 떨어지는 애니메이션 시작
+            });
+        }
+
+        // 입력 창에 텍스트가 입력될 때마다 나선형 텍스트 업데이트
+        input.addEventListener("input", generateSpiralText);
+
+        // 페이지 로드 시 기본 텍스트로 초기화
+        generateSpiralText();
+    </script>
+</body>
+</html>
